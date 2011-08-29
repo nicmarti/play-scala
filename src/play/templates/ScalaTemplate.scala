@@ -353,6 +353,10 @@ package play.templates {
 
             def matchExpression:Parser[Display] = {
                 at ~> positioned(identifier ~ whiteSpaceNoBreak ~ "match" ^^ {case i~w~m => Simple(i+w+m)}) ~ block ^^ {
+                at ~> positioned(identifier ~ opt(chainedMethods) ~ whiteSpaceNoBreak ~ "match" ^^ {
+                    case i~Some(Simple(cs))~w~m => Simple(i+cs+w+m);
+                    case i~None~w~m => Simple(i+w+m);
+                }) ~ block ^^ {
                     case expr~block => {
                         Display(ScalaExp(List(expr, block)))
                     }
